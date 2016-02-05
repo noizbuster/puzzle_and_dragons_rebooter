@@ -50,27 +50,32 @@ public class ADBSession extends Thread {
 			// check command
 			switch (this.commandFlag) {
 			case CMD_NOP:
-				System.out.println("nop");
 				break;
 			case CMD_STR:
 				this.commandFlag = CMD_NOP;
 				try {
 					this.writer.write(this.command + this.ls);
 					this.writer.flush();
-					String bf = reader.readLine();
-					if (bf != null) {
-						this.printOut(bf);
+					try {
+						while(reader.ready()){
+							String bf = reader.readLine();
+//							System.out.println("read output1 : "+ bf);
+							this.printOut(bf);
+						}
+//						System.out.println("read output3 : ");
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				
 				break;
 			case CMD_END:
 				amigo = false;
 				break;
 			}
-			System.out.println("hit here");
-			System.out.println("but not here");
+			System.out.println("loop");
 		} // end loop
 		this.printOut("ended adb session");
 	}
