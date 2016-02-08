@@ -122,7 +122,6 @@ public class RebooterUI extends JFrame implements ActionListener{
 			try {
 				this.finalize();
 			} catch (Throwable e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -134,34 +133,34 @@ public class RebooterUI extends JFrame implements ActionListener{
 		switch (cmd) {
 		case str_shutdown:
 			System.out.println("str_shutdown clicked");
-			this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.getShutdownCmd(localeCode));
+			this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.shutdownPad(localeCode));
 			break;
 		case str_launch:
 			System.out.println("str_launch clicked");
-			this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.getLaunchCmd(localeCode));
+			this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.launchPad(localeCode));
 			break;
 		case str_restart:
 			System.out.println("str_restart clicked");
 			new Thread()
 			{
 			    public void run() {
-					RebooterUI.this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.getShutdownCmd(localeCode));
+					RebooterUI.this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.shutdownPad(localeCode));
 					try {
 						this.sleep(1500);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					RebooterUI.this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.getLaunchCmd(localeCode));
+					RebooterUI.this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.launchPad(localeCode));
 			    }
 			}.start();
 			break;
 		case str_screenshot:
-			this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.getScreenshotCmd());
+			this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.takeScreenshot());
 			System.out.println("screenshot clicked");
 			break;
 		case str_screenshotclear:
-			this.session.putCommand(ADBSession.CMD_STR, "rm /storage/emulated/0/Pictures/Screenshots/wwpad*");
-			System.out.println("s4");
+			this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.removeScreenshot());
+			System.out.println("screenshotRemove clicked");
 			break;
 		case str_radioko:
 			this.localeCode = LOCALE_KO;

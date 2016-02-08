@@ -33,16 +33,16 @@ public class AdbCommandBuilder {
 		return output;
 	}
 
-	public static String getShutdownCmd(int localeCode){
+	public static String shutdownPad(int localeCode){
 		return shutdownBase + getPackageName(localeCode);
 	}
 
-	public static String getLaunchCmd(int localeCode){
+	public static String launchPad(int localeCode){
 		return launchBase + getPackageName(localeCode) + launchEnd;
 	}
 	
-	public static String getScreenshotCmd(){
-		return screenshotBase + System.currentTimeMillis() + ".png";
+	public static String takeScreenshot(){
+		return screenshotBase + screenshotPath + screenshotPrefix + System.currentTimeMillis() + ".png";
 	}
 	
 	public static String removeScreenshot(){
