@@ -11,7 +11,11 @@ public class AdbCommandBuilder {
 	public static final String shutdownBase = "am force-stop ";
 	public static final String launchBase = "monkey -p ";
 	public static final String launchEnd = " -c android.intent.category.LAUNCHER 1";
-	public static final String screenshotBase = "screencap -p /storage/emulated/0/Pictures/Screenshots/wwpad";
+	public static final String screenshotBase = "screencap -p ";
+	public static 	    String screenshotPath = "/storage/emulated/0/Pictures/Screenshots/";
+	public static final String screenshotPrefix = "wwpad";
+	public static final String removeBase = "rm ";
+	public static final String removeEnd = "*";
 
 	public static String getPackageName(int localeCode){
 		String output = packageBase;
@@ -41,4 +45,7 @@ public class AdbCommandBuilder {
 		return screenshotBase + System.currentTimeMillis() + ".png";
 	}
 	
+	public static String removeScreenshot(){
+		return removeBase + screenshotPath + screenshotPrefix + removeEnd;
+	}
 }
