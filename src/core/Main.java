@@ -1,3 +1,4 @@
+package core;
 import ui.RebooterUI;
 
 public class Main {
