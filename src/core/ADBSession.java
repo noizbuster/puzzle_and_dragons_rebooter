@@ -13,6 +13,8 @@ public class ADBSession extends Thread {
 	public static final int CMD_NOP = 0;
 	public static final int CMD_STR = 1;
 	public static final int CMD_END = 999;
+	private static final String adbinWindows = "adb.exe";
+	private static final String adbinLinux = "./adb";
 	private final String ls = System.getProperty("line.separator");
 
 	private int commandFlag = 0;
@@ -30,7 +32,14 @@ public class ADBSession extends Thread {
 	}
 
 	public static Process makeAdbProcess() throws IOException {
-		return makeAdbProcess("./adb", "shell");
+		if(isUnix()){
+			return makeAdbProcess(adbinLinux, "shell");
+		} else if (isWindows()){
+			return makeAdbProcess(adbinWindows, "shell");
+		} else {
+			System.out.println("Impossible case Hit, #00000002");
+			return null;
+		}
 	}
 
 	public ADBSession(JTextArea view) throws IOException {
@@ -94,4 +103,23 @@ public class ADBSession extends Thread {
 		System.out.println(msg);
 	}
 
+	public static String getOS(){
+		return System.getProperty("os.name").toLowerCase();
+	}
+	public static boolean isWindows() {
+		String OS = getOS();
+		return (OS.indexOf("win") >= 0);
+
+	}
+
+	public static boolean isMac() {
+		String OS = getOS();
+		return (OS.indexOf("mac") >= 0);
+
+	}
+
+	public static boolean isUnix() {
+		String OS = getOS();
+		return (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") > 0 );
+	}
 }
