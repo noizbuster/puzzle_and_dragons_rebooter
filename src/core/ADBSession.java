@@ -59,10 +59,8 @@ public class ADBSession extends Thread {
 					try {
 						while(reader.ready()){
 							String bf = reader.readLine();
-//							System.out.println("read output1 : "+ bf);
 							this.printOut(bf);
 						}
-//						System.out.println("read output3 : ");
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -73,6 +71,9 @@ public class ADBSession extends Thread {
 				break;
 			case CMD_END:
 				amigo = false;
+				break;
+			default:
+				System.err.println("Impossible Case Hit! : #00000001");
 				break;
 			}
 			System.out.println("loop");

@@ -2,11 +2,9 @@ package ui;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 import javax.swing.ButtonGroup;
@@ -17,23 +15,16 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 
 import core.ADBSession;
+import core.AdbCommandBuilder;
 
 public class RebooterUI extends JFrame implements ActionListener{
 	//VM will generate serialVersiuonUID
 	private static final long serialVersionUID = 1L;
-	
+
 	public static final int LOCALE_KO = 1;
 	public static final int LOCALE_JP = 2;
 	public static final int LOCALE_US = 3;
-	public static final String packageBase = "jp.gungho.";
-	public static final String shutdownBase = "am force-stop ";
-	public static final String launchBase = "monkey -p ";
-	public static final String launchEnd = " -c android.intent.category.LAUNCHER 1";
-	public static final String screenshotBase = "screencap -p /storage/emulated/0/Pictures/Screenshots/wwpad";
-	public static final String LOCALE_KO_STR = "padKO";
-	public static final String LOCALE_JP_STR = "pad";
-	public static final String LOCALE_US_STR = "padUS";
-
+	
 	// UI components
 	JPanel buttonBox;
 	JButton btnShutdown;		final String str_shutdown = "ShutDown";
@@ -49,7 +40,6 @@ public class RebooterUI extends JFrame implements ActionListener{
 	JTextArea consoleLog;
 	
 	// Data Attributes
-	int screenshotCnt = 1;
 	int localeCode = 1;
 	ADBSession session;	
 	
@@ -137,35 +127,6 @@ public class RebooterUI extends JFrame implements ActionListener{
 			}
 		}
 	}
-	
-	private String getPackageName(){
-		String output = packageBase;
-		switch(this.localeCode){
-		case LOCALE_KO:
-			output += LOCALE_KO_STR;
-			break;
-		case LOCALE_JP:
-			output += LOCALE_JP_STR;
-			break;
-		case LOCALE_US:
-			output += LOCALE_US_STR;
-			break;
-		}
-		return output;
-	}
-
-	private String getShutdownCmd(){
-		return shutdownBase + getPackageName();
-	}
-
-	private String getLaunchCmd(){
-		return launchBase + getPackageName() + launchEnd;
-	}
-	
-	private String getScreenshotCmd(){
-		return screenshotBase + screenshotCnt + ".png";
-	}
-	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -173,37 +134,29 @@ public class RebooterUI extends JFrame implements ActionListener{
 		switch (cmd) {
 		case str_shutdown:
 			System.out.println("str_shutdown clicked");
-			this.session.putCommand(ADBSession.CMD_STR, getShutdownCmd());
+			this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.getShutdownCmd(localeCode));
 			break;
 		case str_launch:
 			System.out.println("str_launch clicked");
-			this.session.putCommand(ADBSession.CMD_STR, getLaunchCmd());
+			this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.getLaunchCmd(localeCode));
 			break;
 		case str_restart:
 			System.out.println("str_restart clicked");
 			new Thread()
 			{
 			    public void run() {
-					RebooterUI.this.session.putCommand(ADBSession.CMD_STR, getShutdownCmd());
+					RebooterUI.this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.getShutdownCmd(localeCode));
 					try {
 						this.sleep(1500);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					RebooterUI.this.session.putCommand(ADBSession.CMD_STR, getLaunchCmd());					
+					RebooterUI.this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.getLaunchCmd(localeCode));
 			    }
 			}.start();
 			break;
 		case str_screenshot:
-			if(screenshotCnt >= 10){
-				for(int cnt = 0; cnt < 10; cnt++){
-					this.session.putCommand(ADBSession.CMD_STR, "rm /storage/emulated/0/Pictures/Screenshots/wwpad"+cnt+".png");
-				}
-			}
-			else{
-				this.session.putCommand(ADBSession.CMD_STR, getScreenshotCmd());
-				screenshotCnt++;
-			}
+			this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.getScreenshotCmd());
 			System.out.println("screenshot clicked");
 			break;
 		case str_screenshotclear:
