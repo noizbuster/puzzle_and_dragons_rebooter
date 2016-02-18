@@ -54,6 +54,7 @@ public class RebooterUI extends JFrame implements ActionListener{
 	public void initComponents(){
 		this.setLayout(new BorderLayout());
 		this.setSize(640, 480);
+		this.setTitle("PAD REBOOTER V1.0");
 		radioButtonBox = new JPanel();
 		buttonBox = new JPanel();
 		consoleLog = new JTextArea();
@@ -148,7 +149,7 @@ public class RebooterUI extends JFrame implements ActionListener{
 			    public void run() {
 					RebooterUI.this.session.putCommand(AdbCommandBuilder.shutdownPad(localeCode));
 					try {
-						this.sleep(1500);
+						Thread.sleep(1500);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
