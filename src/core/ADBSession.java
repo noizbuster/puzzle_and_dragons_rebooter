@@ -98,39 +98,36 @@ public class ADBSession extends Thread {
 			case CMD_STR:
 				this.commandFlag = CMD_NOP;
 				this.outputView.append("command execute: " + this.command + ls);
+				String wholeCmd;
 				if (isWindows) {
-					new Thread(){
-						@Override
-						public void run() {
-							try {
-								String line;
-								Process p = Runtime.getRuntime().exec("adb shell " + command);
-								BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
-								BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-								while ((line = bri.readLine()) != null) {
-									printOut(line + ls);
-								}
-								bri.close();
-								while ((line = bre.readLine()) != null) {
-									printOut(line + ls);
-								}
-								bre.close();
-								printOut(command + ls);
-							} catch (Exception E) {
-								E.printStackTrace();
-							}
-							super.run();
-						}
-					}.start();
+					wholeCmd = adbinWindows + " " + command;
 				} else {
-					try {
-						this.writer.write(this.command + this.ls);
-						this.outputView.append("command execute: " + this.command + ls);
-						this.writer.flush();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					wholeCmd = adbinLinux + " " + command;
 				}
+				
+				new Thread(){
+					@Override
+					public void run() {
+						try {
+							String line;
+							Process p = Runtime.getRuntime().exec(wholeCmd);
+							BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
+							BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+							while ((line = bri.readLine()) != null) {
+								printOut(line + ls);
+							}
+							bri.close();
+							while ((line = bre.readLine()) != null) {
+								printOut(line + ls);
+							}
+							bre.close();
+							printOut(command + ls);
+						} catch (Exception E) {
+							E.printStackTrace();
+						}
+						super.run();
+					}
+				}.start();
 				
 				break;
 			case CMD_END:
@@ -148,31 +145,37 @@ public class ADBSession extends Thread {
 	public void putCommand(int cmdFlag, String cmd) {
 		this.command = cmd;
 		this.commandFlag = cmdFlag;
+		String wholeCmd;
 		if (isWindows) {
-			new Thread(){
-				@Override
-				public void run() {
-					try {
-						String line;
-						Process p = Runtime.getRuntime().exec("adb shell " + command);
-						BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
-						BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-						while ((line = bri.readLine()) != null) {
-							printOut(line + ls);
-						}
-						bri.close();
-						while ((line = bre.readLine()) != null) {
-							printOut(line + ls);
-						}
-						bre.close();
-						printOut(command + ls);
-					} catch (Exception E) {
-						E.printStackTrace();
-					}
-					super.run();
-				}
-			}.start();
+			wholeCmd = adbinWindows + " shell " + command;
+		} else {
+			wholeCmd = adbinLinux + " shell " + command;
 		}
+
+		System.out.println("@@@@@@@@"+wholeCmd);
+		new Thread(){
+			@Override
+			public void run() {
+				try {
+					String line;
+					Process p = Runtime.getRuntime().exec(wholeCmd);
+					BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
+					BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+					while ((line = bri.readLine()) != null) {
+						printOut(line + ls);
+					}
+					bri.close();
+					while ((line = bre.readLine()) != null) {
+						printOut(line + ls);
+					}
+					bre.close();
+					printOut(command + ls);
+				} catch (Exception E) {
+					E.printStackTrace();
+				}
+				super.run();
+			}
+		}.start();
 		this.outputView.append("command recv: " + cmd + ls);
 	}
 
@@ -206,7 +209,5 @@ public class ADBSession extends Thread {
 	
 	public void windowsCommand() {
 		System.out.println("wincommand called : "+"adb shell " + this.command);
-		
-		
 	}
 }

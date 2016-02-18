@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import core.ADBSession;
@@ -38,6 +39,7 @@ public class RebooterUI extends JFrame implements ActionListener{
 	JRadioButton radioJP;		final String str_radiojp = "Japen";
 	JRadioButton radioUS;		final String str_radious = "USA";
 	JTextArea consoleLog;
+	JScrollPane scroll;
 	
 	// Data Attributes
 	int localeCode = 1;
@@ -55,9 +57,11 @@ public class RebooterUI extends JFrame implements ActionListener{
 		radioButtonBox = new JPanel();
 		buttonBox = new JPanel();
 		consoleLog = new JTextArea();
+		scroll = new JScrollPane (consoleLog, 
+				   JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		this.add(radioButtonBox, BorderLayout.WEST);
 		this.add(buttonBox, BorderLayout.EAST);
-		this.add(consoleLog,BorderLayout.CENTER);
+		this.add(scroll,BorderLayout.CENTER);
 		radioButtonBox.setLayout(new GridLayout(3, 1));
 		buttonBox.setLayout(new GridLayout(5, 1));
 
