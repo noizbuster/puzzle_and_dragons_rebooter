@@ -102,11 +102,13 @@ public class RebooterUI extends JFrame implements ActionListener{
 		radioUS.setMnemonic(KeyEvent.VK_U);
 		radioUS.setActionCommand(str_radious);
 		radioUS.addActionListener(this);
+
 		//radiobutton group
 		radioGroup = new ButtonGroup();
 		radioGroup.add(radioKO);
 		radioGroup.add(radioJP);
 		radioGroup.add(radioUS);
+
 		//put radio_buttons to panel
         radioButtonBox.add(radioKO);
         radioButtonBox.add(radioJP);
@@ -120,7 +122,6 @@ public class RebooterUI extends JFrame implements ActionListener{
 	private void makeAdbSession() {
 		try {
 			session = new ADBSession(consoleLog);
-			session.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 			try {
@@ -136,47 +137,39 @@ public class RebooterUI extends JFrame implements ActionListener{
 		String cmd = e.getActionCommand();
 		switch (cmd) {
 		case str_shutdown:
-			System.out.println("str_shutdown clicked");
-			this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.shutdownPad(localeCode));
+			this.session.putCommand(AdbCommandBuilder.shutdownPad(localeCode));
 			break;
 		case str_launch:
-			System.out.println("str_launch clicked");
-			this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.launchPad(localeCode));
+			this.session.putCommand(AdbCommandBuilder.launchPad(localeCode));
 			break;
 		case str_restart:
-			System.out.println("str_restart clicked");
 			new Thread()
 			{
 			    public void run() {
-					RebooterUI.this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.shutdownPad(localeCode));
+					RebooterUI.this.session.putCommand(AdbCommandBuilder.shutdownPad(localeCode));
 					try {
 						this.sleep(1500);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					RebooterUI.this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.launchPad(localeCode));
+					RebooterUI.this.session.putCommand(AdbCommandBuilder.launchPad(localeCode));
 			    }
 			}.start();
 			break;
 		case str_screenshot:
-			this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.takeScreenshot());
-			System.out.println("screenshot clicked");
+			this.session.putCommand(AdbCommandBuilder.takeScreenshot());
 			break;
 		case str_screenshotclear:
-			this.session.putCommand(ADBSession.CMD_STR, AdbCommandBuilder.removeScreenshot());
-			System.out.println("screenshotRemove clicked");
+			this.session.putCommand(AdbCommandBuilder.removeScreenshot());
 			break;
 		case str_radioko:
 			this.localeCode = LOCALE_KO;
-			System.out.println("str_radioko clicked");
 			break;
 		case str_radiojp:
 			this.localeCode = LOCALE_JP;
-			System.out.println("str_radiojp clicked");
 			break;
 		case str_radious:
 			this.localeCode = LOCALE_US;
-			System.out.println("str_radious clicked");
 			break;
 
 		default:
